@@ -1542,6 +1542,7 @@
 	letter-spacing: normal;
 	line-height: 1.75rem;
 	left: 20px;
+	bottom: 20px;
 	position: relative;
 	z-index: 1;
 }
