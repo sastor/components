@@ -1,0 +1,151 @@
+<?
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+$this->setFrameMode(true);
+//            <div class="media-files__item row tabs__content active">
+//                <div class="media-files__item__left col-xl-8 col-lg-8 col-md-7">
+//                    <div class="media-files__item__left__content"><img class="media-files__item__left__content__back" src="https://img.gazeta.ru/files3/329/12998329/RIAN_6193416.HR-pic4_zoom-1500x1500-3754.jpg">
+//                        <div class="media-files__item__left__content__category">Видео</div>
+//                        <div class="media-files__item__left__content__title">Поздравление Министра образования и науки РФ О.Ю. Васильевой с Днем студента</div><a class="media-files__item__left__content__play" href=""><img src="<?= SITE_TEMPLATE_PATH ? >/assets/images/play.png"></a>
+//                    </div>
+//                </div>
+//                <div class="media-files__item__right col-xl-4 col-lg-4 col-md-5">
+//                    <div class="media-files__item__right__content"><img class="media-files__item__right__content__image" src="https://img.gazeta.ru/files3/329/12998329/RIAN_6193416.HR-pic4_zoom-1500x1500-3754.jpg"><a class="media-files__item__right__content__title" href="">Международный форум, посвящённый развитию всех уровней системы образования «Образование России»</a>
+//                        <div class="media-files__item__right__content__size">6 фотографий</div>
+//                    </div>
+//                </div>
+//            </div>
+$is_all_sections = ($arResult["SECTION"] ? false : true);
+?>
+<?
+//print_r($arResult["ITEMS"]);
+?>
+
+<div class="media-files__item row tabs__content <?=$is_all_sections ? 'active' : '' ?>">
+    <? foreach ($arResult["ITEMS"] as $key => $arItem): ?>
+		<?
+		if ($is_all_sections && $key == 2) break;
+		$this->AddEditAction($arItem['ID'], $arItem['EDIT_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_EDIT"));
+		$this->AddDeleteAction($arItem['ID'], $arItem['DELETE_LINK'], CIBlock::GetArrayByID($arItem["IBLOCK_ID"], "ELEMENT_DELETE") , array(
+        "CONFIRM" => GetMessage('CT_BNL_ELEMENT_DELETE_CONFIRM')
+		));
+		?>
+        <? if ($is_all_sections && !$key): ?>
+			<div id="<?=$this->GetEditAreaId($arItem['ID']); ?>" class="media-files__item__left col-xl-8 col-lg-8 col-md-6">
+				<?php if ($arItem["VIDEO"])
+        		{ ?>
+					<div class="mb-5 news-detail-youtube embed-responsive embed-responsive-16by9" style="display: block;">
+					<iframe src="<?php echo $arItem["VIDEO"]; ?>" frameborder="0" allowfullscreen=""></iframe>
+					</div>
+				<?php
+        		}
+       				elseif ($arItem["DISPLAY_PROPERTIES"]["STREAM"]["VALUE"])
+        			{ ?>					
+						<div class="box">
+							<video id="my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>" poster="/media/film.svg" class="video-js vjs-4-3 vjs-theme-forest" playsinline webkit-playinginline data-setup='{"controls": true, "autoplay": false, "preload": "metadata"}'>
+							<source src="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM"]["VALUE"] ?>" type="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM_TYPE"]["VALUE"] ?>"> </video>
+							<script>var player = videojs('my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>');</script>
+						</div>
+				<?php
+				}
+        			elseif ($arItem["DISPLAY_PROPERTIES"]["VIDEOFILE"]["VALUE"])
+        			{ ?>
+						<div class="box">
+							<? $tempname = explode("/", CFile::GetPath($arItem["PROPERTIES"]["VIDEOFILE"]["VALUE"])); ?>
+							<? $name = explode(".", array_pop($tempname)) [0]; ?>
+							<? if (file_exists($_SERVER["DOCUMENT_ROOT"] . '/upload/videoprew/' . $name . '.jpg'))
+           					{
+                			$poster = '/upload/videoprew/' . $name . '.jpg';
+            				}
+           					else
+            				{
+               				exec('ffmpeg -i ' . $_SERVER["DOCUMENT_ROOT"] . '' . CFile::GetPath($arItem["PROPERTIES"]["VIDEOFILE"]["VALUE"]) . ' -ss 00:00:05 -frames:v 1 ' . $_SERVER["DOCUMENT_ROOT"] . '/upload/videoprew/' . $name . '.jpg');
+                			$poster = '/upload/videoprew/' . $name . '.jpg';
+            				}
+							?>
+							<video id="my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>" poster="<?=$poster ?>" class="video-js vjs-4-3 vjs-theme-forest" playsinline webkit-playinginline data-setup='{"controls": true, "autoplay": false, "preload": "none"}'>
+							<source src="<?=$arItem["DISPLAY_PROPERTIES"]["VIDEOFILE"]["FILE_VALUE"]["SRC"] ?>" type="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM_TYPE"]["VALUE"] ?>"> </video>
+							<script>
+								var player = videojs('my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>')
+							</script>												
+						</div>
+                    	
+				<?php
+        		}
+        			else
+        			{ ?>
+        				<div class="info-img">
+                    		<img
+							src="<?=$arItem["PREVIEW_PICTURE"]["SRC"] ?>"
+							alt="<?=$arItem["PREVIEW_PICTURE"]["ALT"] ?>"
+							title="<?=$arItem["PREVIEW_PICTURE"]["TITLE"] ?>"
+							/>
+						</div>
+                        <?
+					} ?>
+				<a class="blog__items__item__title bvi-speech" href="<?=$arItem["DETAIL_PAGE_URL"] ?>">
+				<? echo $arItem["NAME"] ?>
+				</a>     	
+			</div>
+        <?
+		else: ?>
+            <div id="<?=$this->GetEditAreaId($arItem['ID']); ?>" class="media-files__item__right col-xl-4 col-lg-4 col-md-6">
+				<?php if ($arItem["VIDEO"])
+        		{ ?>
+					<div class="mb-5 news-detail-youtube embed-responsive embed-responsive-16by9" style="display: block;">
+					<iframe src="<?php echo $arItem["VIDEO"]; ?>" frameborder="0" allowfullscreen=""></iframe>
+					</div>
+				<?php
+        		}
+       				elseif ($arItem["DISPLAY_PROPERTIES"]["STREAM"]["VALUE"])
+        			{ ?>					
+						<div class="box">
+							<video id="my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>" poster="/media/film.svg" class="video-js vjs-4-3 vjs-theme-forest" playsinline webkit-playinginline data-setup='{"controls": true, "autoplay": false, "preload": "metadata"}'>
+							<source src="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM"]["VALUE"] ?>" type="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM_TYPE"]["VALUE"] ?>"> </video>
+							<script>var player = videojs('my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>');</script>
+						</div>
+				<?php
+				}
+        			elseif ($arItem["DISPLAY_PROPERTIES"]["VIDEOFILE"]["VALUE"])
+        			{ ?>
+						<div class="box">
+							<? $tempname = explode("/", CFile::GetPath($arItem["PROPERTIES"]["VIDEOFILE"]["VALUE"])); ?>
+							<? $name = explode(".", array_pop($tempname)) [0]; ?>
+							<? if (file_exists($_SERVER["DOCUMENT_ROOT"] . '/upload/videoprew/' . $name . '.jpg'))
+           					{
+                			$poster = '/upload/videoprew/' . $name . '.jpg';
+            				}
+           					else
+            				{
+               				exec('ffmpeg -i ' . $_SERVER["DOCUMENT_ROOT"] . '' . CFile::GetPath($arItem["PROPERTIES"]["VIDEOFILE"]["VALUE"]) . ' -ss 00:00:05 -frames:v 1 ' . $_SERVER["DOCUMENT_ROOT"] . '/upload/videoprew/' . $name . '.jpg');
+                			$poster = '/upload/videoprew/' . $name . '.jpg';
+            				}
+							?>
+							<video id="my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>" poster="<?=$poster ?>" class="video-js vjs-4-3 vjs-theme-forest" playsinline webkit-playinginline data-setup='{"controls": true, "autoplay": false, "preload": "none"}'>
+							<source src="<?=$arItem["DISPLAY_PROPERTIES"]["VIDEOFILE"]["FILE_VALUE"]["SRC"] ?>" type="<?=$arItem["DISPLAY_PROPERTIES"]["STREAM_TYPE"]["VALUE"] ?>"> </video>
+							<script>
+								var player = videojs('my_video_<?=$this->GetEditAreaId($arItem['ID']); ?>')
+							</script>												
+						</div>
+
+                    	
+				<?php
+        		}
+        			else
+        			{ ?>
+        				<div class="info-img">
+                    		<img
+							src="<?=$arItem["PREVIEW_PICTURE"]["SRC"] ?>"
+							alt="<?=$arItem["PREVIEW_PICTURE"]["ALT"] ?>"
+							title="<?=$arItem["PREVIEW_PICTURE"]["TITLE"] ?>"
+							/>
+						</div>
+
+                        <?
+					} ?>
+				<a class="blog__items__item__title bvi-speech" href="<?=$arItem["DETAIL_PAGE_URL"] ?>">
+				<? echo $arItem["NAME"] ?>
+				</a>
+            </div>
+        <?endif;?>
+    <?endforeach;?>
+</div>
