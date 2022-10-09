@@ -1534,16 +1534,16 @@
 }
 
 .media-files__item__left__content__title {
-    color: #f4f7fb;
-    font-size: 1.25rem;
-    font-stretch: normal;
-    font-style: normal;
-    font-weight: 500;
-    letter-spacing: normal;
-    line-height: 1.75rem;
-    padding-right: 60px;
-    position: relative;
-    z-index: 1
+	color: #f4f7fb;
+	font-size: 1.25rem;
+	font-stretch: normal;
+	font-style: normal;
+	font-weight: 500;
+	letter-spacing: normal;
+	line-height: 1.75rem;
+	left: 20px;
+	position: relative;
+	z-index: 1;
 }
 
 .media-files__item__right__content__image {
@@ -2554,7 +2554,8 @@ table {
 
 .embed-responsive,.info-img {
 	width: 100%;
-	padding-top: 56.25%; /* отношение 16:9 */
+	/* padding-top: 56.25%;  отношение 16:9 */
+	padding-top: 75%; /* отношение 4:3 */
     border-radius: 4px;
     -o-object-fit: cover;
     object-fit: cover;
