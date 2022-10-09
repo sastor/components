@@ -363,6 +363,8 @@
     text-decoration: none
 }
 
+.box {margin-bottom:24px}
+
 .button,.header__bottom__content__menu__item.sub>a {
     -ms-flex-pack: center;
     -webkit-box-pack: center;
@@ -1541,9 +1543,6 @@
 	font-weight: 500;
 	letter-spacing: normal;
 	line-height: 1.75rem;
-	left: 20px;
-	bottom: 20px;
-	position: relative;
 	z-index: 1;
 }
 
